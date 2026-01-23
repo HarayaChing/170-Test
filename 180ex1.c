@@ -12,48 +12,56 @@ void print_mat(float* mat,int n){
     }
 }
 
-int convertToIndex(int row,int col, int width){ 
-    // Function converts coordinates to index ref [1]
-    return (row*width)+col;
-}
-
-float calculate_zsn(float *mat, int n, int j, float x){
-    int index;
-    float a_j = 0, d_j = 0, val = 0;
-    
-    // calculates avarage of column a_j
-    for (int row = 0; row<n ; row++){
-        index = convertToIndex(row,j,n);
-        a_j += mat[index];
-    }
-    a_j = a_j/n;
-    
-    // calculates standard dev of column d_j
-    for (int row = 0; row<n ; row++){
-        index = convertToIndex(row,j,n);
-        d_j += pow(mat[index] - a_j,2);
-    }
-    d_j = sqrt(d_j/n);
-    
-    // calculates z score
-    val = (x-a_j)/d_j;
-    // printf("avarage is %f standard dev is %f z score is %f \n", a_j,d_j,val);
-    
-    return val;
-}
-
 void zsn(float *mat,float *zsn_mat, int n){
-    
+    float *mean_array, *sd_array;
     int index;
-    float t;
+    float t,a_j = 0, d_j = 0;
     
-    for (int i = 0; i<(n) ; i++){
-        for (int j = 0; j<(n) ; j++){
-            index = convertToIndex(i,j,n);
-            t = calculate_zsn(mat,n,j,mat[index]);
+    // Create and calculate arrays for sd and mean
+    mean_array = (float*)malloc(sizeof(float)*n);
+    sd_array = (float*)malloc(sizeof(float)*n);
+
+    for (int i = 0; i<n ; i++){
+        a_j = 0;
+        d_j = 0;
+
+        //calculates mean
+        for(int j =0; j<n; j++){
+            index = (j*n)+i; // convert coorinates to index see [1] modified to go through column
+            a_j += mat[index];
+        }
+        a_j = a_j/n;
+        mean_array[i] = a_j;
+
+        // calculates sd
+        for (int j = 0; j<n ; j++){
+            index = (j*n)+i;
+            d_j += (mat[index] - a_j) * (mat[index] - a_j);
+        }
+        d_j = sqrt(d_j/n);
+        sd_array[i] = d_j;
+    }
+    
+    // printf("means: ");
+    // for(int i =0; i<n ;i++){
+    //     printf("%f ",mean_array[i]);
+    // }
+    // printf("\nsd: ");
+    // for(int i =0; i<n ;i++){
+    //     printf("%f ",sd_array[i]);
+    // }
+    
+    // calculate z-score
+    for (int i = 0; i<n ; i++){
+        for (int j = 0; j<n ; j++){
+            index = (i*n)+j;
+            t = (mat[index] - mean_array[j])/sd_array[j];
             zsn_mat[index] = t;
         }
     }
+
+    free(mean_array);
+    free(sd_array);
 }
 
 int main() {
@@ -90,20 +98,23 @@ int main() {
                 val = rand() % 10+1;
                 mat[i] = val;
             }
+            printf("\nFinished filling matrix\n");
             // fill zsn matrix
             zsn(mat,zsn_mat,n);
-            
+            printf("Finished computing z scores\n");
             // Print matrices
-            printf("Before");
-            print_mat(mat,n);
-            printf("\nAfter");
-            print_mat(zsn_mat,n);
-
+            // printf("Before");
+            // print_mat(mat,n);
+            // printf("\nAfter");
+            // print_mat(zsn_mat,n);
+            
             break;
-        
+            
             default:
             printf("invalid input");
     }
+    free(mat);
+    free(zsn_mat);
     return 0;
 } 
 
