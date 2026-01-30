@@ -12,11 +12,12 @@ void print_mat(float* mat,int n){
     }
 }
 
-void zsn(float *mat,float *zsn_mat, int n){
+int zsn(float *mat,float *zsn_mat, int n){
     float *mean_array, *sd_array;
-    int index;
+    int index, curr_time,final_time;
     float t,a_j = 0, d_j = 0;
     
+
     // Create and calculate arrays for sd and mean
     mean_array = (float*)malloc(sizeof(float)*n);
     sd_array = (float*)malloc(sizeof(float)*n);
@@ -100,8 +101,12 @@ int main() {
             }
             printf("\nFinished filling matrix\n");
             // fill zsn matrix
+            clock_t t; // init timer [2]
+            t = clock();
             zsn(mat,zsn_mat,n);
-            printf("Finished computing z scores\n");
+            t = clock() - t;
+            double time_elapsed = (double)t/CLOCKS_PER_SEC;
+            printf("Finished computing z scores with time elapsed %f \n",time_elapsed);
             // Print matrices
             // printf("Before");
             // print_mat(mat,n);
@@ -123,5 +128,5 @@ int main() {
 
 References:
 [1] https://stackoverflow.com/questions/1730961/convert-a-2d-array-index-into-a-1d-index
-
+[2] https://www.geeksforgeeks.org/cpp/how-to-measure-time-taken-by-a-program-in-c/
 */
