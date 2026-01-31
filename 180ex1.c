@@ -72,19 +72,7 @@ int main() {
     int user_input,n,mat_size;
     float val;
 
-    
-    printf("[1] pre made aray \n[2] generate array \ninput choice: ");
-    
-    scanf("%d",&user_input);
-    
-    switch(user_input){
-        // -- For Checking --
-        case 1:
-            break;
-        
-        // -- Actual Use --
-        case 2:
-            
+            // Get user input
             printf("Input matrix size n: ");
             scanf("%d",&n);
             
@@ -99,25 +87,21 @@ int main() {
                 val = rand() % 10+1;
                 mat[i] = val;
             }
-            printf("\nFinished filling matrix\n");
-            // fill zsn matrix
-            clock_t t; // init timer [2]
-            t = clock();
-            zsn(mat,zsn_mat,n);
-            t = clock() - t;
-            double time_elapsed = (double)t/CLOCKS_PER_SEC;
-            printf("Finished computing z scores with time elapsed %f \n",time_elapsed);
-            // Print matrices
-            // printf("Before");
-            // print_mat(mat,n);
-            // printf("\nAfter");
-            // print_mat(zsn_mat,n);
+            printf("\nFinished filling matrix : %d x %d \n", n);
             
-            break;
-            
-            default:
-            printf("invalid input");
+            for(int i =0; i<3 ;i++){
+
+                printf("Run %d",i+1);
+                
+                clock_t t; // init timer [2]
+                t = clock();
+                zsn(mat,zsn_mat,n);
+                t = clock() - t;
+                double time_elapsed = (double)t/CLOCKS_PER_SEC;
+                printf("Finished computing z scores with time elapsed %f \n",time_elapsed);
+            }
     }
+    // Free allocated array
     free(mat);
     free(zsn_mat);
     return 0;
